@@ -1,24 +1,23 @@
 package com.odetto.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "subject_student")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Subjects {
+public class SubjectStudent {
     @Id
-    @Column(name = "ID")
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-
+    private Long id;
+    @Column(name = "ID_subject")
+    private Long subjectId;
+    @Column(name = "enrollment_student")
+    private Long studentEnrollment;
 }

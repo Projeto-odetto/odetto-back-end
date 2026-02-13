@@ -1,6 +1,5 @@
 package com.odetto.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -14,11 +13,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Subjects {
+public class Grades {
     @Id
-    @Column(name = "ID")
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-
+    private Long id;
+    private Long reportCardId;
+    private Long subjectId;
+    private Double grade;
 }
