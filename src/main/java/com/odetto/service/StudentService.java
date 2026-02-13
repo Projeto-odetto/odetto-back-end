@@ -1,6 +1,8 @@
 package com.odetto.service;
 
+import com.odetto.dto.Student.StudentRequestDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
+import com.odetto.model.Student;
 import com.odetto.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +28,9 @@ public class StudentService {
         return studentResponseDTOS;
     }
 
-    public StudentResponseDTO insertStudent(StudentResponseDTO student) {
-        var studentEntity = objectMapper.convertValue(student, com.odetto.model.Student.class);
-        var savedStudent = studentRepository.save(studentEntity);
+    public StudentResponseDTO insertStudent(StudentRequestDTO student) {
+        Student studentEntity = objectMapper.convertValue(student, Student.class);
+        Student savedStudent = studentRepository.save(studentEntity);
         return objectMapper.convertValue(savedStudent, StudentResponseDTO.class);
     }
 
