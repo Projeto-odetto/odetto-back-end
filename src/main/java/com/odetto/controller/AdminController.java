@@ -27,3 +27,4 @@ public class AdminController {
         List<AdminResponseDTO> admins = adminService.listAdmin();
         return ResponseEntity.ok(admins);
     }
+}
