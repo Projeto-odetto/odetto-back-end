@@ -1,6 +1,5 @@
 package com.odetto.controller;
 
-import com.odetto.dto.Student.StudentRequestDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ public class StudentController {
 
     private final StudentService studentService;
 
+    @Autowired
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
@@ -30,6 +30,7 @@ public class StudentController {
     }
 
     @GetMapping("/insert-student")
+    public ResponseEntity<String> insertStudent(@RequestBody StudentResponseDTO student) {
     public ResponseEntity<String> insertStudent(@RequestBody StudentRequestDTO student) {
         studentService.insertStudent(student);
         return ResponseEntity.ok("Student inserted successfully!");
