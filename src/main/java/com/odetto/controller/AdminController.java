@@ -1,6 +1,5 @@
 package com.odetto.controller;
 
-
 import com.odetto.dto.Admin.AdminRequestDTO;
 import com.odetto.dto.Admin.AdminResponseDTO;
 import com.odetto.service.AdminService;
@@ -17,15 +16,15 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
 
+    @Autowired
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
+
 
     @GetMapping("/list-admins")
     public ResponseEntity<List<AdminResponseDTO>> listAdmins() {
         List<AdminResponseDTO> admins = adminService.listAdmin();
         return ResponseEntity.ok(admins);
     }
-
-
 }
