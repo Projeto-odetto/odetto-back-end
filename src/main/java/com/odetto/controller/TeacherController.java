@@ -4,6 +4,7 @@ import com.odetto.dto.Teacher.TeacherResponseDTO;
 import com.odetto.service.TeacherService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,8 +25,8 @@ public class TeacherController {
         return ResponseEntity.ok(teachers);
     }
 
-    @GetMapping("/get-teacher-by-cpf")
-    public ResponseEntity<TeacherResponseDTO> getTeacherByCpf(String cpf) {
+    @GetMapping("/get-teacher-by-cpf/{cpf}")
+    public ResponseEntity<TeacherResponseDTO> getTeacherByCpf(@PathVariable String cpf) {
         TeacherResponseDTO teacher = teacherService.getTeacher(cpf);
         return ResponseEntity.ok(teacher);
     }

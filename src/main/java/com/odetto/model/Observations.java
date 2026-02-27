@@ -18,12 +18,12 @@ public class Observations {
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @Column(name = "enrollment_student")
-    private Integer enrollmentStudent;
+    private Long enrollmentStudent;
     @Column(name = "cpf_teacher")
-    private Integer cpfTeacher;
+    private Long cpfTeacher;
     private String observation;
-    @Column(name = "ID_subject")
-    private Integer IdSubject;
+    @Column(name = "id_subject")
+    private Long IdSubject;
 }

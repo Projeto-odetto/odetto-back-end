@@ -34,6 +34,13 @@ public class StudentService {
         return objectMapper.convertValue(savedStudent, StudentResponseDTO.class);
     }
 
+    public List<StudentResponseDTO> findStudentsBySubjectName(String subjectName) {
+        List<StudentResponseDTO> studentResponseDTOS = studentRepository.findStudentsBySubjectName(subjectName).stream()
+                .map(student -> objectMapper.convertValue(student, StudentResponseDTO.class))
+                .toList();
+        return studentResponseDTOS;
+    }
+
     public void deleteStudent(Long id) {
             studentRepository.deleteById(id);
     }
