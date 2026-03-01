@@ -45,7 +45,7 @@ public class StudentService {
             studentRepository.deleteById(id);
     }
 
-
-
-
+    public StudentResponseDTO updateStudent(Long id, StudentRequestDTO student) {
+        Student studentEntity = objectMapper.convertValue(student, Student.class);
+    }
 }
