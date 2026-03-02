@@ -4,8 +4,7 @@ import com.odetto.dto.Grades.StudentGradeResponseDTO;
 import com.odetto.projection.StudentGradeProjection;
 import com.odetto.repository.GradesRepository;
 import org.springframework.stereotype.Service;
-import tools.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.NoSuchElementException;
 
