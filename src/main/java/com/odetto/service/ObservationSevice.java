@@ -5,23 +5,22 @@ import com.odetto.dto.Observation.ObservationResponseDTO;
 import com.odetto.model.Observations;
 import com.odetto.repository.ObservationsRepository;
 import org.springframework.stereotype.Service;
-import tools.jackson.databind.ObjectMapper;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 public class ObservationSevice {
-    private final ObservationsRepository observationRespository;
+    private final ObservationsRepository observationRepository;
     private final ObjectMapper objectMapper;
 
-    public ObservationSevice(ObservationsRepository observationRespository, ObjectMapper objectMapper) {
-        this.observationRespository = observationRespository;
+    public ObservationSevice(ObservationsRepository observationRepository, ObjectMapper objectMapper) {
+        this.observationRepository = observationRepository;
         this.objectMapper = objectMapper;
     }
 
     public List<ObservationResponseDTO> listObservationsByEnrollment(Long enrollment, String subject) {
-        List<Observations> observations = observationRespository.FindByStudentEnrollment(enrollment, subject);
+        List<Observations> observations = observationRepository.FindByStudentEnrollment(enrollment, subject);
         if (observations.isEmpty()) {
             throw new NoSuchElementException("Nenhuma observação encontrada para o aluno com matrícula " + enrollment);
         }

@@ -3,9 +3,11 @@ package com.odetto.dto.Student;
 import lombok.Value;
 
 @Value
-public class StudentResponseDTO {
+public class StudentLoginResponseDTO {
+    Long enrollment;
     String name;
     String email;
     String password;
-    String cpf;
+    Long cpf;
+    boolean firstLogin;
 }

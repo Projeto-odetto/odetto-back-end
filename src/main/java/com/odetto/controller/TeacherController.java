@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -26,9 +27,12 @@ public class TeacherController {
     }
 
     @GetMapping("/get-teacher-by-cpf/{cpf}")
-    public ResponseEntity<TeacherResponseDTO> getTeacherByCpf(@PathVariable String cpf) {
-        TeacherResponseDTO teacher = teacherService.getTeacher(cpf);
-        return ResponseEntity.ok(teacher);
+    public ResponseEntity<TeacherResponseDTO> getTeacherByCpf(@PathVariable Long cpf) {
+        Optional<TeacherResponseDTO> teacherOpt = teacherService.getTeacher(cpf);
+        if (teacherOpt.isEmpty()) {
+            return ResponseEntity.status(404).body(null); // ou mensagem custom
+        }
+        return ResponseEntity.ok(teacherOpt.get());
     }
 
 
