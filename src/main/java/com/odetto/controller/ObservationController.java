@@ -1,10 +1,9 @@
 package com.odetto.controller;
 
+import com.odetto.dto.Observation.ObservationRequestDTO;
 import com.odetto.dto.Observation.ObservationResponseDTO;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import com.odetto.service.ObservationSevice;
@@ -25,5 +24,11 @@ public class ObservationController {
     public ResponseEntity<List<ObservationResponseDTO>>listObservationByEnrollment(@PathVariable Long enrollment,@PathVariable String subject) {
         List<ObservationResponseDTO> observations = observationService.listObservationsByEnrollment(enrollment,subject);
         return ResponseEntity.ok(observations);
+    }
+
+    @PostMapping("/insert-observation")
+    public ResponseEntity<String> insertObservation(@Valid @RequestBody ObservationRequestDTO observation) {
+        observationService.insertObservation(observation);
+        return ResponseEntity.ok("Observation inserted successfully!");
     }
 }
