@@ -1,4 +1,4 @@
-package com.odetto.dto.Admin;
+package com.odetto.dto.admin;
 
 import lombok.Value;
 
