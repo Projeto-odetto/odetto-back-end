@@ -1,6 +1,6 @@
 package com.odetto.service;
 
-import com.odetto.dto.Admin.AdminResponseDTO;
+import com.odetto.dto.admin.AdminResponseDTO;
 import com.odetto.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

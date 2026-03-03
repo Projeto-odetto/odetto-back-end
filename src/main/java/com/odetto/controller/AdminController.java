@@ -1,8 +1,7 @@
 package com.odetto.controller;
 
-import com.odetto.dto.Admin.AdminRequestDTO;
-import com.odetto.dto.Admin.AdminResponseDTO;
-import com.odetto.dto.Admin.PreCadastroRequestDTO;
+import com.odetto.dto.admin.AdminResponseDTO;
+import com.odetto.dto.admin.PreCadastroRequestDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;

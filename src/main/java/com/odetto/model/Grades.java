@@ -1,12 +1,9 @@
 package com.odetto.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Getter
@@ -15,9 +12,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Grades {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long reportCardId;
     private Long subjectId;
-    private Double grade;
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "grade", columnDefinition = "float8[]")
+    private Double[] grade;
 }

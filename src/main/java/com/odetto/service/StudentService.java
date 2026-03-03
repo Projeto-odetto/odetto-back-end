@@ -1,6 +1,6 @@
 package com.odetto.service;
 
-import com.odetto.dto.Admin.PreCadastroRequestDTO;
+import com.odetto.dto.admin.PreCadastroRequestDTO;
 import com.odetto.dto.Student.StudentRequestDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.model.Student;
@@ -8,6 +8,7 @@ import com.odetto.repository.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.odetto.util.EnrollmentGenerator;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,20 +50,29 @@ public class StudentService {
 
     public StudentResponseDTO preCadastro(PreCadastroRequestDTO dto) {
         Student student = new Student();
-        student.setName(null);
-        student.setEmail(dto.getEmail());
         student.setCpf(dto.getCpf());
-        student.setPassword(null);
+        student.setEmail(dto.getEmail());
+        student.setName(null);
+
+        Long newEnrollment = EnrollmentGenerator.generate();
+
+        while (studentRepository.existsById(newEnrollment)) {
+            newEnrollment = EnrollmentGenerator.generate();
+        }
+
+        student.setEnrollment(newEnrollment);
+
+        student.setPassword(String.valueOf(newEnrollment));
 
         Student saved = studentRepository.save(student);
 
-        String generatedPassword = String.valueOf(saved.getEnrollment());
-        saved.setPassword(generatedPassword);
-        Student updated = studentRepository.save(saved);
+        try {
+            emailService.sendPreCadastroEmail(saved);
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar e-mail: " + e.getMessage());
+        }
 
-        emailService.sendPreCadastroEmail(updated);
-
-        return objectMapper.convertValue(updated, StudentResponseDTO.class);
+        return objectMapper.convertValue(saved, StudentResponseDTO.class);
     }
 
     public Optional<Student> findStudentByCpf(Long cpf) {

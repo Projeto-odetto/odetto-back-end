@@ -4,6 +4,7 @@ import com.odetto.model.Student;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +18,7 @@ public class EmailService {
         this.fromAddress = fromAddress;
     }
 
+    @Async
     public void sendPreCadastroEmail(Student student) {
         String subject = "Pré-cadastro realizado — Odetto";
         String text = buildPreCadastroText(student);
@@ -32,15 +34,19 @@ public class EmailService {
 
     private String buildPreCadastroText(Student student) {
         return String.format(
-                "Olá,\n\n" +
-                        "Você foi pré-cadastrado no sistema Odetto.\n\n" +
-                        "Matrícula: %d\n" +
-                        "Senha inicial: %d\n\n" +
-                        "Use seu CPF como usuário e a matrícula acima como senha para fazer o primeiro login.\n" +
-                        "No primeiro acesso, complete seu cadastro (coloque seu nome) e altere a senha.\n\n" +
-                        "Se você não solicitou esse pré-cadastro, entre em contato com a secretaria.\n\n" +
-                        "Atenciosamente,\nEquipe Odetto",
-                student.getEnrollment(), student.getEnrollment()
+                "Prezado(a) aluno(a),\n\n" +
+                        "Seja bem-vindo(a) ao Odetto! Seu pré-cadastro foi realizado com sucesso.\n\n" +
+                        "Para acessar a plataforma, utilize as credenciais abaixo:\n" +
+                        "--------------------------------------\n" +
+                        "USUÁRIO (CPF): %d\n" +
+                        "SENHA (MATRÍCULA): %d\n" +
+                        "--------------------------------------\n\n" +
+                        "Este é o seu primeiro acesso. Após o login, você deverá:\n" +
+                        "1. Preencher seu nome completo.\n" +
+                        "2. Alterar sua senha para uma de sua preferência.\n\n" +
+                        "Atenciosamente,\n" +
+                        "Administração Odetto",
+                student.getCpf(), student.getEnrollment()
         );
     }
 }
