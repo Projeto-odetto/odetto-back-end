@@ -16,7 +16,9 @@ public interface GradesRepository extends JpaRepository<Grades,Long> {
             s2.name as subjectName,
             t.name as teacherName,
             g.grade as grades,
-            ROUND((SELECT AVG(elem) FROM unnest(g.grade) elem)::numeric, 2) as average
+            ROUND(CAST(
+                (SELECT AVG(elem) FROM unnest(g.grade) elem)
+            AS numeric), 2) as average
         from grades g
         join report_card rc on g.report_card_id = rc.id
         join student s on rc.enrollment_student = s.enrollment

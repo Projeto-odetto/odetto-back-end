@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.odetto.util.EnrollmentGenerator;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -39,11 +40,11 @@ public class StudentService {
     }
 
     public List<StudentResponseDTO> findStudentsBySubjectName(String subjectName) {
-        return studentRepository.findStudentsBySubjectName(subjectName).stream()
+        List<StudentResponseDTO> studentResponseDTOS =  studentRepository.findStudentsBySubjectName(subjectName).stream()
                 .map(student -> objectMapper.convertValue(student, StudentResponseDTO.class))
                 .toList();
         if (studentResponseDTOS.isEmpty()) {
-            throw new RuntimeException("Nenhum estudante encontrado para a disciplina: " + subjectName);
+            throw new NoSuchElementException("Nenhum estudante encontrado para a disciplina: " + subjectName);
         }
         return studentResponseDTOS;
     }
