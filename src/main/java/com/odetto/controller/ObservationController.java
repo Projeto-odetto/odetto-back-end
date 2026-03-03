@@ -20,7 +20,7 @@ public class ObservationController {
         this.observationService = observationService;
     }
 
-    @GetMapping("/list-observation-by-enrollment/{enrollment}/{cpfTeacher}/{subject}")
+    @GetMapping("/list-observation-by-enrollment/{enrollment}/{subject}")
     public ResponseEntity<List<ObservationResponseDTO>>listObservationByEnrollment(@PathVariable Long enrollment,@PathVariable String subject) {
         List<ObservationResponseDTO> observations = observationService.listObservationsByEnrollment(enrollment,subject);
         return ResponseEntity.ok(observations);

@@ -38,6 +38,9 @@ public class StudentService {
         List<StudentResponseDTO> studentResponseDTOS = studentRepository.findStudentsBySubjectName(subjectName).stream()
                 .map(student -> objectMapper.convertValue(student, StudentResponseDTO.class))
                 .toList();
+        if (studentResponseDTOS.isEmpty()) {
+            throw new RuntimeException("Nenhum estudante encontrado para a disciplina: " + subjectName);
+        }
         return studentResponseDTOS;
     }
 
