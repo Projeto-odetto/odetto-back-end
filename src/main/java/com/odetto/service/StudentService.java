@@ -39,7 +39,7 @@ public class StudentService {
     }
 
     public List<StudentResponseDTO> findStudentsBySubjectName(String subjectName) {
-        return studentRepository.findStudentsBySubjectName(subjectName).stream()
+        List<StudentResponseDTO> studentResponseDTOS =  studentRepository.findStudentsBySubjectName(subjectName).stream()
                 .map(student -> objectMapper.convertValue(student, StudentResponseDTO.class))
                 .toList();
         if (studentResponseDTOS.isEmpty()) {
