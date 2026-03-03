@@ -1,5 +1,6 @@
 package com.odetto.service;
 
+import com.odetto.dto.Observation.ObservationRequestDTO;
 import com.odetto.dto.Observation.ObservationResponseDTO;
 import com.odetto.model.Observations;
 import com.odetto.repository.ObservationsRepository;
@@ -26,5 +27,10 @@ public class ObservationSevice {
         return observations.stream()
                 .map(observation -> objectMapper.convertValue(observation, ObservationResponseDTO.class))
                 .toList();
+    }
+
+    public void insertObservation(ObservationRequestDTO observation) {
+        Observations observationEntity = objectMapper.convertValue(observation, Observations.class);
+        observationRespository.save(observationEntity);
     }
 }

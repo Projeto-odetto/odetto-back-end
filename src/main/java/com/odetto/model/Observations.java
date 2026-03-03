@@ -25,5 +25,5 @@ public class Observations {
     private Long cpfTeacher;
     private String observation;
     @Column(name = "id_subject")
-    private Long IdSubject;
+    private Long idSubject;
 }
