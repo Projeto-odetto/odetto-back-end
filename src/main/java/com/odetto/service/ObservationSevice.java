@@ -31,6 +31,6 @@ public class ObservationSevice {
 
     public void insertObservation(ObservationRequestDTO observation) {
         Observations observationEntity = objectMapper.convertValue(observation, Observations.class);
-        observationRespository.save(observationEntity);
+        observationRepository.save(observationEntity);
     }
 }
