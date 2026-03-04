@@ -1,5 +1,6 @@
 package com.odetto.controller;
 
+import com.odetto.dto.Student.StudentFinalCadastroDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.dto.Student.StudentRequestDTO;
 import com.odetto.service.StudentService;
@@ -39,5 +40,9 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
-
+    @PatchMapping("/cadastro-final")
+    public ResponseEntity<StudentResponseDTO> finalCadastro(@RequestBody StudentFinalCadastroDTO dto) {
+        StudentResponseDTO response = studentService.finalCadastro(dto);
+        return ResponseEntity.ok(response);
+    }
 }
