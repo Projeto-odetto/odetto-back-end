@@ -19,8 +19,8 @@ public class ObservationSevice {
         this.objectMapper = objectMapper;
     }
 
-    public List<ObservationResponseDTO> listObservationsByEnrollment(Long enrollment, String subject) {
-        List<Observations> observations = observationRepository.FindByStudentEnrollment(enrollment, subject);
+    public List<ObservationResponseDTO> listObservationsByEnrollment(Long enrollment, Long subjectId) {
+        List<Observations> observations = observationRepository.FindByStudentEnrollment(enrollment, subjectId);
         if (observations.isEmpty()) {
             throw new NoSuchElementException("Nenhuma observação encontrada para o aluno com matrícula " + enrollment);
         }

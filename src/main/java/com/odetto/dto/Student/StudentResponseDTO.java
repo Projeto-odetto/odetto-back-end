@@ -6,6 +6,5 @@ import lombok.Value;
 public class StudentResponseDTO {
     String name;
     String email;
-    String password;
     String cpf;
 }

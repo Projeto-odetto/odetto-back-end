@@ -8,5 +8,5 @@ public class ObservationResponseDTO {
      Long enrollmentStudent;
      Long cpfTeacher;
     String observation;
-    Long IdSubject;
+    Long idSubject;
 }
