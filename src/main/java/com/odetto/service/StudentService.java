@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.odetto.util.EnrollmentGenerator;
+import com.odetto.dto.Student.StudentFinalCadastroDTO;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -88,6 +89,22 @@ public class StudentService {
         Student studentEntity = objectMapper.convertValue(student, Student.class);
         studentEntity.setEnrollment(id);
         Student saved = studentRepository.save(studentEntity);
+        return objectMapper.convertValue(saved, StudentResponseDTO.class);
+    }
+
+    public StudentResponseDTO finalCadastro(StudentFinalCadastroDTO dto) {
+        Student student = studentRepository.findById(dto.getEnrollment())
+                .orElseThrow(() -> new NoSuchElementException("Estudante com matrícula " + dto.getEnrollment() + " não encontrado."));
+
+        if (student.getName() != null && !student.getName().isEmpty()) {
+            throw new IllegalArgumentException("Este aluno já realizou o cadastro final.");
+        }
+
+        student.setName(dto.getName());
+        student.setPassword(dto.getPassword());
+
+        Student saved = studentRepository.save(student);
+
         return objectMapper.convertValue(saved, StudentResponseDTO.class);
     }
 }
