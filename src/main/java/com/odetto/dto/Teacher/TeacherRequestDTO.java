@@ -9,4 +9,5 @@ public class TeacherRequestDTO {
     private String username;
     private String password;
     private String hireDate;
+    String subject;
 }

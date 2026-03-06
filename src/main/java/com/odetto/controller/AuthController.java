@@ -2,6 +2,7 @@ package com.odetto.controller;
 
 import com.odetto.dto.LoginRequestDTO;
 import com.odetto.dto.Student.StudentLoginResponseDTO;
+import com.odetto.dto.Teacher.TeacherRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
 import com.odetto.model.Student;
 import com.odetto.model.Teacher;
@@ -30,13 +31,23 @@ public class AuthController {
         Long cpf = request.getCpf();
         String password = request.getPassword();
 
-        Optional<TeacherResponseDTO> teacherOpt = teacherService.getTeacher(cpf);
+        Optional<TeacherRequestDTO> teacherOpt = teacherService.getTeacher(cpf);
         if (teacherOpt.isPresent()) {
-            TeacherResponseDTO teacher = teacherOpt.get();
+            TeacherRequestDTO teacher = teacherOpt.get();
+
             if (teacher.getPassword() == null || !teacher.getPassword().equals(password)) {
                 return ResponseEntity.status(401).body("Senha incorreta para professor.");
             }
-            return ResponseEntity.ok(teacher);
+
+            TeacherResponseDTO teacherResponse = new TeacherResponseDTO(
+                    String.valueOf(teacher.getCpf()),
+                    teacher.getName(),
+                    teacher.getUsername(),
+                    teacher.getHireDate(),
+                    teacher.getSubject()
+            );
+
+            return ResponseEntity.ok(teacherResponse);
         }
 
         Optional<Student> studentOpt = studentService.findStudentByCpf(cpf);

@@ -1,5 +1,6 @@
 package com.odetto.controller;
 
+import com.odetto.dto.Teacher.TeacherRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
 import com.odetto.service.TeacherService;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +23,40 @@ public class TeacherController {
 
     @GetMapping("/list-teachers")
     public ResponseEntity<List<TeacherResponseDTO>> listTeachers() {
-        List<TeacherResponseDTO> teachers = teacherService.listTeachers();
-        return ResponseEntity.ok(teachers);
+        List<TeacherRequestDTO> teacherRequests = teacherService.listTeachers();
+
+        List<TeacherResponseDTO> responses = teacherRequests.stream()
+                .map(t -> new TeacherResponseDTO(
+                        String.valueOf(t.getCpf()),
+                        t.getName(),
+                        t.getUsername(),
+                        t.getHireDate(),
+                        t.getSubject()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(responses);
     }
+
 
     @GetMapping("/get-teacher-by-cpf/{cpf}")
     public ResponseEntity<TeacherResponseDTO> getTeacherByCpf(@PathVariable Long cpf) {
-        Optional<TeacherResponseDTO> teacherOpt = teacherService.getTeacher(cpf);
+        Optional<TeacherRequestDTO> teacherOpt = teacherService.getTeacher(cpf);
         if (teacherOpt.isEmpty()) {
-            return ResponseEntity.status(404).body(null); // ou mensagem custom
+            return ResponseEntity.status(404).body(null);
         }
-        return ResponseEntity.ok(teacherOpt.get());
+
+        TeacherRequestDTO teacher = teacherOpt.get();
+
+        TeacherResponseDTO teacherResponse = new TeacherResponseDTO(
+                String.valueOf(teacher.getCpf()),
+                teacher.getName(),
+                teacher.getUsername(),
+                teacher.getHireDate(),
+                teacher.getSubject()
+        );
+
+        return ResponseEntity.ok(teacherResponse);
     }
 
 
