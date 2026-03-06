@@ -1,7 +1,8 @@
 package com.odetto.service;
 
+import com.odetto.dto.LoginRequestDTO;
+import com.odetto.dto.Teacher.TeacherRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
-import com.odetto.model.Teacher;
 import com.odetto.repository.TeacherRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,14 @@ public class TeacherService {
         this.objectMapper = objectMapper;
     }
 
-    public Optional<TeacherResponseDTO> getTeacher(Long cpf) {
+    public Optional<TeacherRequestDTO> getTeacher(Long cpf) {
         return teacherRepository.findByCpf(cpf)
-                .map(teacher -> objectMapper.convertValue(teacher, TeacherResponseDTO.class));
+                .map(teacher -> objectMapper.convertValue(teacher, TeacherRequestDTO.class));
     }
 
-    public List<TeacherResponseDTO> listTeachers() {
-        return teacherRepository.findAll().stream()
-                .map(teacher -> objectMapper.convertValue(teacher, TeacherResponseDTO.class))
+    public List<TeacherRequestDTO> listTeachers() {
+        return teacherRepository.findAllProjected().stream()
+                .map(teacher -> objectMapper.convertValue(teacher, TeacherRequestDTO.class))
                 .toList();
     }
 }
