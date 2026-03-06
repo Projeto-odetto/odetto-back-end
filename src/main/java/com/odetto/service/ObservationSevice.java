@@ -3,6 +3,7 @@ package com.odetto.service;
 import com.odetto.dto.Observation.ObservationRequestDTO;
 import com.odetto.dto.Observation.ObservationResponseDTO;
 import com.odetto.model.Observations;
+import com.odetto.projection.ObservationProjection;
 import com.odetto.repository.ObservationsRepository;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,13 +20,22 @@ public class ObservationSevice {
         this.objectMapper = objectMapper;
     }
 
-    public List<ObservationResponseDTO> listObservationsByEnrollment(Long enrollment, Long subjectId) {
-        List<Observations> observations = observationRepository.FindByStudentEnrollment(enrollment, subjectId);
+    public List<ObservationResponseDTO> listObservationsByEnrollmentAndSubject(Long enrollment, Long subjectId) {
+        List<Observations> observations = observationRepository.findByStudentEnrollmentAndSubject(enrollment, subjectId);
         if (observations.isEmpty()) {
             throw new NoSuchElementException("Nenhuma observação encontrada para o aluno com matrícula " + enrollment);
         }
         return observations.stream()
                 .map(observation -> objectMapper.convertValue(observation, ObservationResponseDTO.class))
+                .toList();
+    }
+
+    public List<ObservationProjection> listObservationsByEnrollment2(Long enrollment) {
+        List<ObservationProjection> observations = observationRepository.findByStudentEnrollment(enrollment);
+        if (observations.isEmpty()) {
+            throw new NoSuchElementException("Nenhuma observação encontrada para o aluno com matrícula " + enrollment);
+        }
+        return observations.stream()
                 .toList();
     }
 
