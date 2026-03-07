@@ -53,28 +53,21 @@ public class GradesService {
 
     @Transactional
     public GradeInsertResponseDTO insertGradeByNames(GradeInsertRequestDTO dto) {
-        // 1. Busca Aluno pelo Nome
         Student student = studentRepository.findByName(dto.getStudentName())
                 .orElseThrow(() -> new NoSuchElementException("Estudante não encontrado: " + dto.getStudentName()));
 
-        // 2. Busca Matéria pelo Nome
         Subjects subject = subjectRepository.findByName(dto.getSubjectName())
                 .orElseThrow(() -> new NoSuchElementException("Matéria não encontrada: " + dto.getSubjectName()));
 
-        // 3. Busca o Boletim do Aluno (ou cria um novo se não existir)
         ReportCard reportCard = reportCardRepository.findByStudentEnrollment(student.getEnrollment())
                 .orElseGet(() -> {
                     ReportCard newReportCard = new ReportCard();
-                    // Aqui você define a matrícula do aluno no novo boletim
-                    // O nome do metodo set pode variar dependendo do seu modelo ReportCard
                     newReportCard.setStudentEnrollment(student.getEnrollment());
                     return reportCardRepository.save(newReportCard);
                 });
 
-        // 4. Busca se já existe registro de notas para essa matéria neste boletim
         Grades gradesEntry = gradesRepository.findByReportCardIdAndSubjectId(reportCard.getId(), Long.valueOf(subject.getId()))
                 .orElseGet(() -> {
-                    // Se não existir, cria um novo objeto Grades
                     Grades newGrades = new Grades();
                     newGrades.setReportCardId(reportCard.getId());
                     newGrades.setSubjectId(Long.valueOf(subject.getId()));
@@ -82,25 +75,23 @@ public class GradesService {
                     return newGrades;
                 });
 
-        // 5. Faz o "append" da nota (Garantindo que a lista seja mutável)
         List<Double> currentGrades = gradesEntry.getGrade();
         if (currentGrades == null) {
             currentGrades = new ArrayList<>();
         } else {
-            currentGrades = new ArrayList<>(currentGrades); // Evita problemas com coleções imutáveis
+            currentGrades = new ArrayList<>(currentGrades);
         }
 
         currentGrades.add(dto.getGradeValue());
         gradesEntry.setGrade(currentGrades);
 
-        // 6. Salva (Insert ou Update automático pelo JPA)
         gradesRepository.save(gradesEntry);
 
         return new GradeInsertResponseDTO(
                 student.getName(),
                 reportCard.getId(),
                 subject.getName(),
-                dto.getGradeValue() // a variável da nota que chegou no parâmetro
+                dto.getGradeValue()
         );
     }
 

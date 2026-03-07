@@ -2,6 +2,7 @@ package com.odetto.controller;
 
 import com.odetto.dto.Grades.GradeInsertRequestDTO;
 import com.odetto.dto.Grades.GradeInsertResponseDTO;
+import com.odetto.dto.Grades.GradesResponseDTO;
 import com.odetto.dto.Grades.StudentGradeResponseDTO;
 import com.odetto.projection.StudentGradeProjection;
 import com.odetto.service.GradesService;
@@ -28,8 +29,6 @@ public class GradesController {
     @PostMapping("/insert")
     public ResponseEntity<GradeInsertResponseDTO> insertGrade(@RequestBody GradeInsertRequestDTO dto) {
         GradeInsertResponseDTO response = gradesService.insertGradeByNames(dto);
-
-        // Retornamos o objeto no corpo da resposta com status 200 (OK)
         return ResponseEntity.ok(response);
     }
 

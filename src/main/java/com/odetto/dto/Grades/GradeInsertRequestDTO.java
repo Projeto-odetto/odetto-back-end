@@ -6,5 +6,5 @@ import lombok.Data;
 public class GradeInsertRequestDTO {
     private String studentName;
     private String subjectName;
-    private Double gradeValues;
+    private Double gradeValue;
 }
