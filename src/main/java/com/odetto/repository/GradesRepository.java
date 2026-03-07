@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface GradesRepository extends JpaRepository<Grades,Long> {
@@ -28,4 +29,6 @@ public interface GradesRepository extends JpaRepository<Grades,Long> {
         where s.enrollment = :enrollmentStudent
         """, nativeQuery = true)
     List<StudentGradeProjection> findGradesByEnrollmentStudent(@Param("enrollmentStudent") Long enrollmentStudent);
+
+    Optional<Grades> findByReportCardIdAndSubjectId(Long reportCardId, Long subjectId);
 }
