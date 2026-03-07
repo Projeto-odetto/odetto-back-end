@@ -2,11 +2,9 @@ package com.odetto.controller;
 
 import com.odetto.dto.Student.StudentFinalCadastroDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
-import com.odetto.dto.Student.StudentRequestDTO;
 import com.odetto.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,12 +24,6 @@ public class StudentController {
     public ResponseEntity<List<StudentResponseDTO>> listStudents() {
         List<StudentResponseDTO> students = studentService.listStudent();
         return ResponseEntity.ok(students);
-    }
-
-    @PostMapping("/insert-student")
-    public ResponseEntity<String> insertStudent(@RequestBody StudentRequestDTO student) {
-        studentService.insertStudent(student);
-        return ResponseEntity.ok("Student inserted successfully!");
     }
 
     @GetMapping("/find-students-by-subject/{subjectName}")

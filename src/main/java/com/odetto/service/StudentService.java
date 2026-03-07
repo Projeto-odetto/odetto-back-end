@@ -1,15 +1,14 @@
 package com.odetto.service;
 
 import com.odetto.dto.admin.PreCadastroRequestDTO;
-import com.odetto.dto.Student.StudentRequestDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
+import com.odetto.dto.Student.StudentFinalCadastroDTO;
 import com.odetto.model.Student;
 import com.odetto.repository.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.odetto.util.EnrollmentGenerator;
-import com.odetto.dto.Student.StudentFinalCadastroDTO;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,14 +33,8 @@ public class StudentService {
                 .toList();
     }
 
-    public StudentResponseDTO insertStudent(StudentRequestDTO student) {
-        Student studentEntity = objectMapper.convertValue(student, Student.class);
-        Student savedStudent = studentRepository.save(studentEntity);
-        return objectMapper.convertValue(savedStudent, StudentResponseDTO.class);
-    }
-
     public List<StudentResponseDTO> findStudentsBySubjectName(String subjectName) {
-        List<StudentResponseDTO> studentResponseDTOS =  studentRepository.findStudentsBySubjectName(subjectName).stream()
+        List<StudentResponseDTO> studentResponseDTOS = studentRepository.findStudentsBySubjectName(subjectName).stream()
                 .map(student -> objectMapper.convertValue(student, StudentResponseDTO.class))
                 .toList();
         if (studentResponseDTOS.isEmpty()) {
@@ -67,7 +60,6 @@ public class StudentService {
         }
 
         student.setEnrollment(newEnrollment);
-
         student.setPassword(String.valueOf(newEnrollment));
 
         Student saved = studentRepository.save(student);
@@ -83,13 +75,6 @@ public class StudentService {
 
     public Optional<Student> findStudentByCpf(Long cpf) {
         return studentRepository.findByCpf(cpf);
-    }
-
-    public StudentResponseDTO updateStudent(Long id, StudentRequestDTO student) {
-        Student studentEntity = objectMapper.convertValue(student, Student.class);
-        studentEntity.setEnrollment(id);
-        Student saved = studentRepository.save(studentEntity);
-        return objectMapper.convertValue(saved, StudentResponseDTO.class);
     }
 
     public StudentResponseDTO finalCadastro(StudentFinalCadastroDTO dto) {
