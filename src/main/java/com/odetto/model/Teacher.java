@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -16,11 +19,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Teacher {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long cpf;
     private String name;
     private String username;
     private String password;
-    @Column(name = "hired_date")
-    private String hiredDate;
+    @CreationTimestamp
+    @Column(name = "hired_date", updatable = false)
+    private LocalDate hiredDate;
 }
