@@ -1,9 +1,6 @@
 package com.odetto.controller;
 
-import com.odetto.dto.Grades.GradeInsertRequestDTO;
-import com.odetto.dto.Grades.GradeInsertResponseDTO;
-import com.odetto.dto.Grades.GradesResponseDTO;
-import com.odetto.dto.Grades.StudentGradeResponseDTO;
+import com.odetto.dto.Grades.*;
 import com.odetto.projection.StudentGradeProjection;
 import com.odetto.service.GradesService;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +33,11 @@ public class GradesController {
     public ResponseEntity<?> listAllGrades() {
         List<GradesResponseDTO> grades = gradesService.findAllGrades();
         return ResponseEntity.ok(grades);
+    }
+
+    @PutMapping("/edit")
+    public ResponseEntity<GradeInsertResponseDTO> editGrade(@RequestBody GradeEditRequestDTO dto) {
+        GradeInsertResponseDTO response = gradesService.editGradeByNames(dto);
+        return ResponseEntity.ok(response);
     }
 }
