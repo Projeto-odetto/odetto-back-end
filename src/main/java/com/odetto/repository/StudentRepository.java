@@ -15,4 +15,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findStudentsBySubjectName(String subjectName);
 
     Optional<Student> findByCpf(Long cpf);
+
+    Optional<Student> findByName(String name);
 }

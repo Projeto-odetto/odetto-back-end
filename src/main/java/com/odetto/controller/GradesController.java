@@ -1,5 +1,7 @@
 package com.odetto.controller;
 
+import com.odetto.dto.Grades.GradeInsertRequestDTO;
+import com.odetto.dto.Grades.GradeInsertResponseDTO;
 import com.odetto.dto.Grades.GradesResponseDTO;
 import com.odetto.dto.Grades.StudentGradeResponseDTO;
 import com.odetto.projection.StudentGradeProjection;
@@ -24,10 +26,10 @@ public class GradesController {
         return ResponseEntity.ok(grades);
     }
 
-    @PatchMapping("/inser-grade/{gradeId}/{grade}")
-    public ResponseEntity<String> insertGrade(@PathVariable Long gradeId, @PathVariable Double grade) {
-        gradesService.insertGrade(grade, gradeId);
-        return ResponseEntity.ok("Grade inserted successfully!");
+    @PostMapping("/insert")
+    public ResponseEntity<GradeInsertResponseDTO> insertGrade(@RequestBody GradeInsertRequestDTO dto) {
+        GradeInsertResponseDTO response = gradesService.insertGradeByNames(dto);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/list-all-grades")
