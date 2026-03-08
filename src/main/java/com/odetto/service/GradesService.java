@@ -1,9 +1,6 @@
 package com.odetto.service;
 
-import com.odetto.dto.Grades.GradeInsertRequestDTO;
-import com.odetto.dto.Grades.GradeInsertResponseDTO;
-import com.odetto.dto.Grades.GradesResponseDTO;
-import com.odetto.dto.Grades.StudentGradeResponseDTO;
+import com.odetto.dto.Grades.*;
 import com.odetto.dto.Observation.ObservationResponseDTO;
 import com.odetto.model.Grades;
 import com.odetto.model.ReportCard;
@@ -103,5 +100,37 @@ public class GradesService {
         return grades.stream()
                 .map(grade -> objectMapper.convertValue(grade, GradesResponseDTO.class))
                 .toList();
+    }
+
+    @Transactional
+    public GradeInsertResponseDTO editGradeByNames(GradeEditRequestDTO dto) {
+        Student student = studentRepository.findByName(dto.getStudentName())
+                .orElseThrow(() -> new NoSuchElementException("Estudante não encontrado: " + dto.getStudentName()));
+
+        Subjects subject = subjectRepository.findByName(dto.getSubjectName())
+                .orElseThrow(() -> new NoSuchElementException("Matéria não encontrada: " + dto.getSubjectName()));
+
+        ReportCard reportCard = reportCardRepository.findByStudentEnrollment(student.getEnrollment())
+                .orElseThrow(() -> new NoSuchElementException("Boletim não encontrado para o aluno: " + dto.getStudentName()));
+
+        Grades gradesEntry = gradesRepository.findByReportCardIdAndSubjectId(reportCard.getId(), Long.valueOf(subject.getId()))
+                .orElseThrow(() -> new NoSuchElementException("Notas não encontradas para a matéria: " + dto.getSubjectName()));
+
+        List<Double> currentGrades = new ArrayList<>(gradesEntry.getGrade());
+
+        if (dto.getGradeIndex() < 0 || dto.getGradeIndex() >= currentGrades.size()) {
+            throw new IllegalArgumentException("Índice de nota inválido: " + dto.getGradeIndex());
+        }
+
+        currentGrades.set(dto.getGradeIndex(), dto.getNewGradeValue());
+        gradesEntry.setGrade(currentGrades);
+        gradesRepository.save(gradesEntry);
+
+        return new GradeInsertResponseDTO(
+                student.getName(),
+                reportCard.getId(),
+                subject.getName(),
+                dto.getNewGradeValue()
+        );
     }
 }
