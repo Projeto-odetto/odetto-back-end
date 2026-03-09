@@ -23,4 +23,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
         JOIN subject s ON st.id_subject = s.id
     """, nativeQuery = true)
     List<TeacherProjection> findAllProjected();
+
+    Optional<Teacher> findByName(String name);
 }
