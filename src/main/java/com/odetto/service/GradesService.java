@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 @Service
@@ -46,6 +47,15 @@ public class GradesService {
             throw new NoSuchElementException("Nenhuma nota encontrada para a matrícula do aluno: " + enrollmentId);
         }
         return grades;
+    }
+
+    public StudentGradeProjection findGradesByEnrollmentAndSubject(Long enrollment, String subject) {
+        Optional<StudentGradeProjection> grades = gradesRepository.findGradesByEnrollmentAndSubject(enrollment, subject);
+        if (grades.isPresent()) {
+            return grades.get();
+        } else {
+            throw new NoSuchElementException("Nenhuma nota encontrada para a matrícula do aluno: " + enrollment);
+        }
     }
 
     @Transactional
