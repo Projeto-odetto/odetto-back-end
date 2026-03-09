@@ -61,4 +61,10 @@ public class TeacherController {
     public ResponseEntity<TeacherResponseDTO> createTeacher(@RequestBody TeacherCreateRequestDTO dto) {
         return ResponseEntity.ok(teacherService.createTeacher(dto));
     }
+
+    @DeleteMapping("/delete/{cpf}")
+    public ResponseEntity<String> deleteTeacher(@PathVariable Long cpf) {
+        teacherService.deleteTeacher(cpf);
+        return ResponseEntity.ok("Professor deletado com sucesso.");
+    }
 }
