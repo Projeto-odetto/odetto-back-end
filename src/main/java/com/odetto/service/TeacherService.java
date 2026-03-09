@@ -1,23 +1,37 @@
 package com.odetto.service;
 
 import com.odetto.dto.LoginRequestDTO;
+import com.odetto.dto.Teacher.TeacherCreateRequestDTO;
 import com.odetto.dto.Teacher.TeacherRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
+import com.odetto.model.SubjectTeacher;
+import com.odetto.model.Subjects;
+import com.odetto.model.Teacher;
+import com.odetto.repository.SubjectRepository;
+import com.odetto.repository.SubjectTeacherRepository;
 import com.odetto.repository.TeacherRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final ObjectMapper objectMapper;
+    private final SubjectRepository subjectRepository;
+    private final SubjectTeacherRepository subjectTeacherRepository;
 
-    public TeacherService(TeacherRepository teacherRepository, ObjectMapper objectMapper) {
+    public TeacherService(TeacherRepository teacherRepository,
+                          ObjectMapper objectMapper,
+                          SubjectRepository subjectRepository,
+                          SubjectTeacherRepository subjectTeacherRepository) {
         this.teacherRepository = teacherRepository;
         this.objectMapper = objectMapper;
+        this.subjectRepository = subjectRepository;
+        this.subjectTeacherRepository = subjectTeacherRepository;
     }
 
     public Optional<TeacherRequestDTO> getTeacher(Long cpf) {
@@ -29,5 +43,36 @@ public class TeacherService {
         return teacherRepository.findAllProjected().stream()
                 .map(teacher -> objectMapper.convertValue(teacher, TeacherRequestDTO.class))
                 .toList();
+    }
+
+    public TeacherResponseDTO createTeacher(TeacherCreateRequestDTO dto) {
+        Teacher teacher = new Teacher();
+        teacher.setCpf(dto.getCpf());
+        teacher.setName(dto.getName());
+        teacher.setUsername(dto.getUsername());
+        teacher.setPassword(dto.getPassword());
+        Teacher saved = teacherRepository.save(teacher);
+
+        Teacher savedWithDate = teacherRepository.findById(saved.getCpf())
+                .orElseThrow(() -> new NoSuchElementException("Erro ao buscar professor após salvar."));
+
+        if (dto.getSubjectNames() != null && !dto.getSubjectNames().isEmpty()) {
+            for (String subjectName : dto.getSubjectNames()) {
+                Subjects subject = subjectRepository.findByName(subjectName)
+                        .orElseThrow(() -> new NoSuchElementException("Matéria não encontrada: " + subjectName));
+                SubjectTeacher link = new SubjectTeacher();
+                link.setTeacherCpf(saved.getCpf());
+                link.setSubjectId(Long.valueOf(subject.getId()));
+                subjectTeacherRepository.save(link);
+            }
+        }
+
+        return new TeacherResponseDTO(
+                String.valueOf(saved.getCpf()),
+                savedWithDate.getName(),
+                savedWithDate.getUsername(),
+                savedWithDate.getHiredDate() != null ? saved.getHiredDate().toString() : null,
+                dto.getSubjectNames() != null ? String.join(", ", dto.getSubjectNames()) : null
+        );
     }
 }

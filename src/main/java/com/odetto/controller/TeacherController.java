@@ -1,13 +1,11 @@
 package com.odetto.controller;
 
+import com.odetto.dto.Teacher.TeacherCreateRequestDTO;
 import com.odetto.dto.Teacher.TeacherRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
 import com.odetto.service.TeacherService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,5 +57,8 @@ public class TeacherController {
         return ResponseEntity.ok(teacherResponse);
     }
 
-
+    @PostMapping("/create")
+    public ResponseEntity<TeacherResponseDTO> createTeacher(@RequestBody TeacherCreateRequestDTO dto) {
+        return ResponseEntity.ok(teacherService.createTeacher(dto));
+    }
 }
