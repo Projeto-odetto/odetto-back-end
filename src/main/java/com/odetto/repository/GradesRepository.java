@@ -31,4 +31,24 @@ public interface GradesRepository extends JpaRepository<Grades,Long> {
     List<StudentGradeProjection> findGradesByEnrollmentStudent(@Param("enrollmentStudent") Long enrollmentStudent);
 
     Optional<Grades> findByReportCardIdAndSubjectId(Long reportCardId, Long subjectId);
+
+    @Query(value = """
+        select
+            s2.name as subjectName,
+            t.name as teacherName,
+            g.grade as grades,
+            ROUND(CAST(
+                          (SELECT AVG(elem) FROM unnest(g.grade) elem)
+                      AS numeric), 2) as average
+        from grades g
+                 join report_card rc on g.id_report_card = rc.id
+        join student s on rc.enrollment_student = s.enrollment
+        join subject s2 on s2.id = g.id_subject
+        join subject_teacher st on st.id_subject = s2.id
+        join teacher t on t.cpf = st.cpf_teacher
+        where s.enrollment = :enrollment
+        and s2.name = :subject
+        limit 1
+    """, nativeQuery = true)
+    Optional<StudentGradeProjection> findGradesByEnrollmentAndSubject(Long enrollment, String subject);
 }

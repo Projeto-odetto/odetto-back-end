@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/grades")
@@ -20,6 +21,12 @@ public class GradesController {
     @GetMapping("/find-grades-by-enrollment/{enrollmentId}")
     public ResponseEntity<?> findGradesByEnrollment(@PathVariable Long enrollmentId) {
         List<StudentGradeProjection> grades = gradesService.findGradesByEnrollmentStudent(enrollmentId);
+        return ResponseEntity.ok(grades);
+    }
+
+    @GetMapping("/find-grades-by-enrollment-and-subject/{enrollment}/{subject}")
+    public ResponseEntity<?> findGradesByEnrollmentAndSubject(@PathVariable Long enrollment, @PathVariable String subject) {
+        StudentGradeProjection grades = gradesService.findGradesByEnrollmentAndSubject(enrollment, subject);
         return ResponseEntity.ok(grades);
     }
 
