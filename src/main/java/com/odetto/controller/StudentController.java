@@ -37,4 +37,10 @@ public class StudentController {
         StudentResponseDTO response = studentService.finalCadastro(dto);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/delete/{enrollment}")
+    public ResponseEntity<String> deleteStudent(@PathVariable Long enrollment) {
+        studentService.deleteStudent(enrollment);
+        return ResponseEntity.ok("Aluno deletado com sucesso.");
+    }
 }

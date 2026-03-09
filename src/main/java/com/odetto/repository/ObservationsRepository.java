@@ -19,4 +19,6 @@ public interface ObservationsRepository extends JpaRepository<Observations, Long
         WHERE o.enrollment_student = :enrollment
     """, nativeQuery = true)
     List<ObservationProjection> findByStudentEnrollment(Long enrollment);
+
+    List<Observations> findAllByEnrollmentStudent(Long enrollmentStudent);
 }
