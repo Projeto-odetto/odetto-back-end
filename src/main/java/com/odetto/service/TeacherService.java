@@ -4,13 +4,16 @@ import com.odetto.dto.LoginRequestDTO;
 import com.odetto.dto.Teacher.TeacherCreateRequestDTO;
 import com.odetto.dto.Teacher.TeacherRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
+import com.odetto.model.Observations;
 import com.odetto.model.SubjectTeacher;
 import com.odetto.model.Subjects;
 import com.odetto.model.Teacher;
+import com.odetto.repository.ObservationsRepository;
 import com.odetto.repository.SubjectRepository;
 import com.odetto.repository.SubjectTeacherRepository;
 import com.odetto.repository.TeacherRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,15 +26,18 @@ public class TeacherService {
     private final ObjectMapper objectMapper;
     private final SubjectRepository subjectRepository;
     private final SubjectTeacherRepository subjectTeacherRepository;
+    private final ObservationsRepository observationsRepository;
 
     public TeacherService(TeacherRepository teacherRepository,
                           ObjectMapper objectMapper,
                           SubjectRepository subjectRepository,
-                          SubjectTeacherRepository subjectTeacherRepository) {
+                          SubjectTeacherRepository subjectTeacherRepository,
+                          ObservationsRepository observationsRepository) {
         this.teacherRepository = teacherRepository;
         this.objectMapper = objectMapper;
         this.subjectRepository = subjectRepository;
         this.subjectTeacherRepository = subjectTeacherRepository;
+        this.observationsRepository = observationsRepository;
     }
 
     public Optional<TeacherRequestDTO> getTeacher(Long cpf) {
@@ -74,5 +80,19 @@ public class TeacherService {
                 savedWithDate.getHiredDate() != null ? saved.getHiredDate().toString() : null,
                 dto.getSubjectNames() != null ? String.join(", ", dto.getSubjectNames()) : null
         );
+    }
+
+    @Transactional
+    public void deleteTeacher(Long cpf) {
+        teacherRepository.findById(cpf)
+                .orElseThrow(() -> new NoSuchElementException("Professor com CPF " + cpf + " não encontrado."));
+
+        List<Observations> obs = observationsRepository.findAllByCpfTeacher(cpf);
+        observationsRepository.deleteAll(obs);
+
+        List<SubjectTeacher> links = subjectTeacherRepository.findByTeacherCpf(cpf);
+        subjectTeacherRepository.deleteAll(links);
+
+        teacherRepository.deleteById(cpf);
     }
 }

@@ -21,4 +21,6 @@ public interface ObservationsRepository extends JpaRepository<Observations, Long
     List<ObservationProjection> findByStudentEnrollment(Long enrollment);
 
     List<Observations> findAllByEnrollmentStudent(Long enrollmentStudent);
+
+    List<Observations> findAllByCpfTeacher(Long cpfTeacher);
 }
