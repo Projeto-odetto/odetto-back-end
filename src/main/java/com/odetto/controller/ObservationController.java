@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-import com.odetto.service.ObservationSevice;
+import com.odetto.service.ObservationService;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ import java.util.List;
 @RequestMapping("/api/observation")
 public class ObservationController {
 
-    private final ObservationSevice observationService;
+    private final ObservationService observationService;
 
-    public ObservationController(ObservationSevice observationService) {
+    public ObservationController(ObservationService observationService) {
         this.observationService = observationService;
     }
 
@@ -34,8 +34,8 @@ public class ObservationController {
     }
 
     @PostMapping("/insert-observation")
-    public ResponseEntity<String> insertObservation(@Valid @RequestBody ObservationRequestDTO observation) {
-        observationService.insertObservation(observation);
-        return ResponseEntity.ok("Observation inserted successfully!");
+    public ResponseEntity<ObservationResponseDTO> insertObservation(@Valid @RequestBody ObservationRequestDTO observation) {
+        ObservationResponseDTO response = observationService.insertObservation(observation);
+        return ResponseEntity.ok(response);
     }
 }
