@@ -53,4 +53,6 @@ public interface GradesRepository extends JpaRepository<Grades,Long> {
     Optional<StudentGradeProjection> findGradesByEnrollmentAndSubject(Long enrollment, String subject);
 
     List<Grades> findByReportCardId(Long reportCardId);
+
+    List<Grades> findBySubjectId(Long subjectId);
 }

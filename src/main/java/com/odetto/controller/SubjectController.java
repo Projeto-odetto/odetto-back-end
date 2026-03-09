@@ -19,4 +19,10 @@ public class SubjectController {
     public ResponseEntity<SubjectResponseDTO> createSubject(@RequestBody SubjectRequestDTO dto) {
         return ResponseEntity.ok(subjectService.createSubject(dto));
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteSubject(@PathVariable Integer id) {
+        subjectService.deleteSubject(id);
+        return ResponseEntity.ok("Matéria deletada com sucesso.");
+    }
 }

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface SubjectTeacherRepository extends JpaRepository<SubjectTeacher, Long> {
     List<SubjectTeacher> findByTeacherCpf(Long teacherCpf);
+
+    List<SubjectTeacher> findBySubjectId(Long subjectId);
 }
