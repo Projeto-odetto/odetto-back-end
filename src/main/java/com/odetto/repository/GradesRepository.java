@@ -51,4 +51,6 @@ public interface GradesRepository extends JpaRepository<Grades,Long> {
         limit 1
     """, nativeQuery = true)
     Optional<StudentGradeProjection> findGradesByEnrollmentAndSubject(Long enrollment, String subject);
+
+    List<Grades> findByReportCardId(Long reportCardId);
 }
