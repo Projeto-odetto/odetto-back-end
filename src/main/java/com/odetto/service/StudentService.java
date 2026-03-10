@@ -1,5 +1,6 @@
 package com.odetto.service;
 
+import com.odetto.dto.Student.StudentEditRequestDTO;
 import com.odetto.dto.admin.PreCadastroRequestDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.dto.Student.StudentFinalCadastroDTO;
@@ -125,5 +126,23 @@ public class StudentService {
         subjectStudentRepository.deleteAll(links);
 
         studentRepository.delete(student);
+    }
+
+    public StudentResponseDTO editStudent(StudentEditRequestDTO dto) {
+        Student student = studentRepository.findById(dto.getEnrollment())
+                .orElseThrow(() -> new NoSuchElementException("Estudante com matrícula " + dto.getEnrollment() + " não encontrado."));
+
+        if (dto.getName() != null && !dto.getName().isBlank()) {
+            student.setName(dto.getName());
+        }
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            student.setEmail(dto.getEmail());
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            student.setPassword(dto.getPassword());
+        }
+
+        Student saved = studentRepository.save(student);
+        return objectMapper.convertValue(saved, StudentResponseDTO.class);
     }
 }

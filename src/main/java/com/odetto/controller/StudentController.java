@@ -1,5 +1,6 @@
 package com.odetto.controller;
 
+import com.odetto.dto.Student.StudentEditRequestDTO;
 import com.odetto.dto.Student.StudentFinalCadastroDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.service.StudentService;
@@ -42,5 +43,10 @@ public class StudentController {
     public ResponseEntity<String> deleteStudent(@PathVariable Long enrollment) {
         studentService.deleteStudent(enrollment);
         return ResponseEntity.ok("Aluno deletado com sucesso.");
+    }
+
+    @PatchMapping("/edit")
+    public ResponseEntity<StudentResponseDTO> editStudent(@RequestBody StudentEditRequestDTO dto) {
+        return ResponseEntity.ok(studentService.editStudent(dto));
     }
 }
