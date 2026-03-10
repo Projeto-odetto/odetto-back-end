@@ -1,7 +1,9 @@
 package com.odetto.controller;
 
 import com.odetto.dto.Teacher.TeacherCreateRequestDTO;
+import com.odetto.dto.Teacher.TeacherEditRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
+import com.odetto.dto.Teacher.TeacherSubjectEditRequestDTO;
 import com.odetto.service.TeacherService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,5 +40,15 @@ public class TeacherController {
     public ResponseEntity<String> deleteTeacher(@PathVariable Long cpf) {
         teacherService.deleteTeacher(cpf);
         return ResponseEntity.ok("Professor deletado com sucesso.");
+    }
+
+    @PatchMapping("/edit")
+    public ResponseEntity<TeacherResponseDTO> editTeacher(@RequestBody TeacherEditRequestDTO dto) {
+        return ResponseEntity.ok(teacherService.editTeacher(dto));
+    }
+
+    @PatchMapping("/edit-subjects")
+    public ResponseEntity<TeacherResponseDTO> editTeacherSubjects(@RequestBody TeacherSubjectEditRequestDTO dto) {
+        return ResponseEntity.ok(teacherService.editTeacherSubjects(dto));
     }
 }
