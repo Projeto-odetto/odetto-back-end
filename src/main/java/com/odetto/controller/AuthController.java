@@ -2,13 +2,12 @@ package com.odetto.controller;
 
 import com.odetto.dto.LoginRequestDTO;
 import com.odetto.dto.Student.StudentLoginResponseDTO;
-import com.odetto.dto.Teacher.TeacherRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
 import com.odetto.model.Student;
-import com.odetto.model.Teacher;
+import com.odetto.projection.TeacherProjection;
+import com.odetto.repository.TeacherRepository;
 import com.odetto.service.StudentService;
 import com.odetto.service.TeacherService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +19,12 @@ public class AuthController {
 
     private final TeacherService teacherService;
     private final StudentService studentService;
+    private final TeacherRepository teacherRepository;
 
-    public AuthController(TeacherService teacherService, StudentService studentService) {
+    public AuthController(TeacherService teacherService, StudentService studentService, TeacherRepository teacherRepository) {
         this.teacherService = teacherService;
         this.studentService = studentService;
+        this.teacherRepository = teacherRepository;
     }
 
     @PostMapping("/login")
@@ -31,23 +32,16 @@ public class AuthController {
         Long cpf = request.getCpf();
         String password = request.getPassword();
 
-        Optional<TeacherRequestDTO> teacherOpt = teacherService.getTeacher(cpf);
+        Optional<TeacherResponseDTO> teacherOpt = teacherService.getTeacher(cpf);
         if (teacherOpt.isPresent()) {
-            TeacherRequestDTO teacher = teacherOpt.get();
+            TeacherResponseDTO teacher = teacherOpt.get();
 
-            if (teacher.getPassword() == null || !teacher.getPassword().equals(password)) {
+            TeacherProjection projection = teacherRepository.findAllByCpf(cpf).get(0);
+            if (projection.getPassword() == null || !projection.getPassword().equals(password)) {
                 return ResponseEntity.status(401).body("Senha incorreta para professor.");
             }
 
-            TeacherResponseDTO teacherResponse = new TeacherResponseDTO(
-                    String.valueOf(teacher.getCpf()),
-                    teacher.getName(),
-                    teacher.getUsername(),
-                    teacher.getHireDate(),
-                    teacher.getSubject()
-            );
-
-            return ResponseEntity.ok(teacherResponse);
+            return ResponseEntity.ok(teacher);
         }
 
         Optional<Student> studentOpt = studentService.findStudentByCpf(cpf);
@@ -61,15 +55,13 @@ public class AuthController {
         }
 
         boolean firstLogin = (student.getName() == null || student.getName().isBlank());
-        StudentLoginResponseDTO resp = new StudentLoginResponseDTO(
+        return ResponseEntity.ok(new StudentLoginResponseDTO(
                 student.getEnrollment(),
                 student.getName(),
                 student.getEmail(),
                 student.getPassword(),
                 student.getCpf(),
                 firstLogin
-        );
-
-        return ResponseEntity.ok(resp);
+        ));
     }
 }

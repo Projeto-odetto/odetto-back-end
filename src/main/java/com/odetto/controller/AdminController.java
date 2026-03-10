@@ -1,7 +1,6 @@
 package com.odetto.controller;
 
-import com.odetto.dto.admin.AdminResponseDTO;
-import com.odetto.dto.admin.PreCadastroRequestDTO;
+import com.odetto.dto.admin.*;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +32,15 @@ public class AdminController {
     @PostMapping("/pre-cadastro")
     public ResponseEntity<StudentResponseDTO> preCadastro(@RequestBody PreCadastroRequestDTO request) {
         return ResponseEntity.ok(studentService.preCadastro(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AdminLoginResponseDTO> login(@RequestBody AdminLoginRequestDTO dto) {
+        return ResponseEntity.ok(adminService.login(dto));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<AdminResponseDTO> createAdmin(@RequestBody AdminRequestDTO dto) {
+        return ResponseEntity.ok(adminService.createAdmin(dto));
     }
 }

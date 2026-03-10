@@ -8,6 +8,7 @@ import com.odetto.model.Observations;
 import com.odetto.model.SubjectTeacher;
 import com.odetto.model.Subjects;
 import com.odetto.model.Teacher;
+import com.odetto.projection.TeacherProjection;
 import com.odetto.repository.ObservationsRepository;
 import com.odetto.repository.SubjectRepository;
 import com.odetto.repository.SubjectTeacherRepository;
@@ -40,15 +41,42 @@ public class TeacherService {
         this.observationsRepository = observationsRepository;
     }
 
-    public Optional<TeacherRequestDTO> getTeacher(Long cpf) {
-        return teacherRepository.findByCpf(cpf)
-                .map(teacher -> objectMapper.convertValue(teacher, TeacherRequestDTO.class));
+    public Optional<TeacherProjection> getTeacherProjection(Long cpf) {
+        return teacherRepository.findByCpf(cpf);
     }
 
-    public List<TeacherRequestDTO> listTeachers() {
+    public List<TeacherResponseDTO> listTeachers() {
         return teacherRepository.findAllProjected().stream()
-                .map(teacher -> objectMapper.convertValue(teacher, TeacherRequestDTO.class))
+                .collect(java.util.stream.Collectors.groupingBy(
+                        t -> t.getCpf() + "|" + t.getName() + "|" + t.getUsername() + "|" + t.getHireDate()
+                ))
+                .entrySet().stream()
+                .map(entry -> {
+                    String[] parts = entry.getKey().split("\\|");
+                    List<String> subjects = entry.getValue().stream()
+                            .map(TeacherProjection::getSubject)
+                            .toList();
+                    return new TeacherResponseDTO(parts[0], parts[1], parts[2], parts[3], subjects);
+                })
                 .toList();
+    }
+
+    public Optional<TeacherResponseDTO> getTeacher(Long cpf) {
+        List<TeacherProjection> projections = teacherRepository.findAllByCpf(cpf);
+        if (projections.isEmpty()) return Optional.empty();
+
+        List<String> subjects = projections.stream()
+                .map(TeacherProjection::getSubject)
+                .toList();
+
+        TeacherProjection first = projections.get(0);
+        return Optional.of(new TeacherResponseDTO(
+                first.getCpf(),
+                first.getName(),
+                first.getUsername(),
+                first.getHireDate(),
+                subjects
+        ));
     }
 
     public TeacherResponseDTO createTeacher(TeacherCreateRequestDTO dto) {
@@ -74,11 +102,11 @@ public class TeacherService {
         }
 
         return new TeacherResponseDTO(
-                String.valueOf(saved.getCpf()),
+                String.valueOf(savedWithDate.getCpf()),
                 savedWithDate.getName(),
                 savedWithDate.getUsername(),
-                savedWithDate.getHiredDate() != null ? saved.getHiredDate().toString() : null,
-                dto.getSubjectNames() != null ? String.join(", ", dto.getSubjectNames()) : null
+                savedWithDate.getHiredDate() != null ? savedWithDate.getHiredDate().toString() : null,
+                dto.getSubjectNames() != null ? dto.getSubjectNames() : List.of()
         );
     }
 

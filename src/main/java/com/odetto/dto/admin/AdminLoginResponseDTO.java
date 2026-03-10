@@ -3,7 +3,7 @@ package com.odetto.dto.admin;
 import lombok.Value;
 
 @Value
-public class AdminResponseDTO {
+public class AdminLoginResponseDTO {
     Long id;
     String email;
 }
