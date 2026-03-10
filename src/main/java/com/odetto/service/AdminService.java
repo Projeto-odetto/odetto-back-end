@@ -49,4 +49,25 @@ public class AdminService {
         return objectMapper.convertValue(saved, AdminResponseDTO.class);
     }
 
+    public AdminResponseDTO editAdmin(AdminRequestDTO dto) {
+        Admin admin = adminRepository.findById(dto.getId())
+                .orElseThrow(() -> new NoSuchElementException("Admin com ID " + dto.getId() + " não encontrado."));
+
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            admin.setEmail(dto.getEmail());
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            admin.setPassword(dto.getPassword());
+        }
+
+        Admin saved = adminRepository.save(admin);
+        return objectMapper.convertValue(saved, AdminResponseDTO.class);
+    }
+
+    public void deleteAdmin(Long id) {
+        adminRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Admin com ID " + id + " não encontrado."));
+        adminRepository.deleteById(id);
+    }
+
 }

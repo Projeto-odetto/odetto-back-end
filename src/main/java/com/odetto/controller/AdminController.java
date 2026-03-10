@@ -43,4 +43,15 @@ public class AdminController {
     public ResponseEntity<AdminResponseDTO> createAdmin(@RequestBody AdminRequestDTO dto) {
         return ResponseEntity.ok(adminService.createAdmin(dto));
     }
+
+    @PatchMapping("/edit")
+    public ResponseEntity<AdminResponseDTO> editAdmin(@RequestBody AdminRequestDTO dto) {
+        return ResponseEntity.ok(adminService.editAdmin(dto));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteAdmin(@PathVariable Long id) {
+        adminService.deleteAdmin(id);
+        return ResponseEntity.ok("Admin deletado com sucesso.");
+    }
 }
