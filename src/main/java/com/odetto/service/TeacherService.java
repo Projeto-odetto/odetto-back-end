@@ -1,9 +1,9 @@
 package com.odetto.service;
 
-import com.odetto.dto.LoginRequestDTO;
 import com.odetto.dto.Teacher.TeacherCreateRequestDTO;
-import com.odetto.dto.Teacher.TeacherRequestDTO;
+import com.odetto.dto.Teacher.TeacherEditRequestDTO;
 import com.odetto.dto.Teacher.TeacherResponseDTO;
+import com.odetto.dto.Teacher.TeacherSubjectEditRequestDTO;
 import com.odetto.model.Observations;
 import com.odetto.model.SubjectTeacher;
 import com.odetto.model.Subjects;
@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -108,6 +109,68 @@ public class TeacherService {
                 savedWithDate.getHiredDate() != null ? savedWithDate.getHiredDate().toString() : null,
                 dto.getSubjectNames() != null ? dto.getSubjectNames() : List.of()
         );
+    }
+
+    @Transactional
+    public TeacherResponseDTO editTeacher(TeacherEditRequestDTO dto) {
+        Teacher teacher = teacherRepository.findById(dto.getCpf())
+                .orElseThrow(() -> new NoSuchElementException("Professor com CPF " + dto.getCpf() + " não encontrado."));
+
+        if (dto.getName() != null && !dto.getName().isBlank()) {
+            teacher.setName(dto.getName());
+        }
+        if (dto.getUsername() != null && !dto.getUsername().isBlank()) {
+            teacher.setUsername(dto.getUsername());
+        }
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            teacher.setPassword(dto.getPassword());
+        }
+
+        teacherRepository.save(teacher);
+
+        return getTeacher(dto.getCpf())
+                .orElseThrow(() -> new NoSuchElementException("Erro ao buscar professor após editar."));
+    }
+
+    @Transactional
+    public TeacherResponseDTO editTeacherSubjects(TeacherSubjectEditRequestDTO dto) {
+        Teacher teacher = teacherRepository.findById(dto.getCpf())
+                .orElseThrow(() -> new NoSuchElementException("Professor com CPF " + dto.getCpf() + " não encontrado."));
+
+        LocalDate cutoffDate = LocalDate.of(2026, 3, 4);
+        if (teacher.getHiredDate() != null && !teacher.getHiredDate().isAfter(cutoffDate)) {
+            throw new IllegalArgumentException("Este professor não pode ter suas matérias editadas.");
+        }
+
+        if (dto.getRemovedSubjects() != null && !dto.getRemovedSubjects().isEmpty()) {
+            for (String subjectName : dto.getRemovedSubjects()) {
+                Subjects subject = subjectRepository.findByName(subjectName)
+                        .orElseThrow(() -> new NoSuchElementException("Matéria não encontrada: " + subjectName));
+                SubjectTeacher link = subjectTeacherRepository
+                        .findByTeacherCpfAndSubjectId(dto.getCpf(), Long.valueOf(subject.getId()))
+                        .orElseThrow(() -> new NoSuchElementException("Professor não leciona a matéria: " + subjectName));
+                subjectTeacherRepository.delete(link);
+            }
+        }
+
+        if (dto.getAddedSubjects() != null && !dto.getAddedSubjects().isEmpty()) {
+            for (String subjectName : dto.getAddedSubjects()) {
+                Subjects subject = subjectRepository.findByName(subjectName)
+                        .orElseThrow(() -> new NoSuchElementException("Matéria não encontrada: " + subjectName));
+                boolean alreadyLinked = subjectTeacherRepository
+                        .findByTeacherCpfAndSubjectId(dto.getCpf(), Long.valueOf(subject.getId()))
+                        .isPresent();
+                if (!alreadyLinked) {
+                    SubjectTeacher link = new SubjectTeacher();
+                    link.setTeacherCpf(dto.getCpf());
+                    link.setSubjectId(Long.valueOf(subject.getId()));
+                    subjectTeacherRepository.save(link);
+                }
+            }
+        }
+
+        return getTeacher(dto.getCpf())
+                .orElseThrow(() -> new NoSuchElementException("Erro ao buscar professor após editar matérias."));
     }
 
     @Transactional
