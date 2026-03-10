@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -54,5 +55,34 @@ public class SubjectService {
         subjectTeacherRepository.deleteAll(subjectTeacherRepository.findBySubjectId(Long.valueOf(id)));
 
         subjectRepository.delete(subject);
+    }
+
+    public List<SubjectResponseDTO> listAllSubjects() {
+        List<Subjects> subjects = subjectRepository.findAll();
+        if (subjects.isEmpty()) {
+            throw new NoSuchElementException("Nenhuma matéria encontrada.");
+        }
+        return subjects.stream()
+                .map(s -> objectMapper.convertValue(s, SubjectResponseDTO.class))
+                .toList();
+    }
+
+    public SubjectResponseDTO getSubjectByName(String name) {
+        Subjects subject = subjectRepository.findByName(name)
+                .orElseThrow(() -> new NoSuchElementException("Matéria não encontrada: " + name));
+        return objectMapper.convertValue(subject, SubjectResponseDTO.class);
+    }
+
+    public SubjectResponseDTO editSubject(Integer id, String name) {
+        Subjects subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Matéria com ID " + id + " não encontrada."));
+
+        if (subjectRepository.findByName(name).isPresent()) {
+            throw new IllegalArgumentException("Já existe uma matéria com o nome: " + name);
+        }
+
+        subject.setName(name);
+        Subjects saved = subjectRepository.save(subject);
+        return objectMapper.convertValue(saved, SubjectResponseDTO.class);
     }
 }
