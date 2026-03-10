@@ -1,11 +1,16 @@
 package com.odetto.service;
 
+import com.odetto.dto.admin.AdminLoginRequestDTO;
+import com.odetto.dto.admin.AdminLoginResponseDTO;
+import com.odetto.dto.admin.AdminRequestDTO;
 import com.odetto.dto.admin.AdminResponseDTO;
+import com.odetto.model.Admin;
 import com.odetto.repository.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class AdminService {
@@ -23,6 +28,25 @@ public class AdminService {
                 .map(admin -> objectMapper.convertValue(admin, AdminResponseDTO.class))
                 .toList();
         return adminResponseDTOS;
+    }
+
+    public AdminLoginResponseDTO login(AdminLoginRequestDTO dto) {
+        Admin admin = adminRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new NoSuchElementException("Admin não encontrado."));
+
+        if (!admin.getPassword().equals(dto.getPassword())) {
+            throw new IllegalArgumentException("Senha incorreta.");
+        }
+
+        return new AdminLoginResponseDTO(admin.getId(), admin.getEmail());
+    }
+
+    public AdminResponseDTO createAdmin(AdminRequestDTO dto) {
+        Admin admin = new Admin();
+        admin.setEmail(dto.getEmail());
+        admin.setPassword(dto.getPassword());
+        Admin saved = adminRepository.save(admin);
+        return objectMapper.convertValue(saved, AdminResponseDTO.class);
     }
 
 }

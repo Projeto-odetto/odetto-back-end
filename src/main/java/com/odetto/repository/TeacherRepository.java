@@ -25,4 +25,12 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     List<TeacherProjection> findAllProjected();
 
     Optional<Teacher> findByName(String name);
+
+    @Query(value = """
+    SELECT t.cpf AS cpf, t.password AS password, t.name AS name, t.username AS username, t.hired_date AS hireDate, s.name AS subject FROM subject_teacher st
+    JOIN teacher t ON st.cpf_teacher = t.cpf
+    JOIN subject s ON st.id_subject = s.id
+    WHERE t.cpf = :cpf
+""", nativeQuery = true)
+    List<TeacherProjection> findAllByCpf(Long cpf);
 }
