@@ -1,6 +1,7 @@
 package com.odetto.controller;
 
 import com.odetto.dto.Student.StudentEditRequestDTO;
+import com.odetto.dto.Student.StudentEditSubjectsDTO;
 import com.odetto.dto.Student.StudentFinalCadastroDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.service.StudentService;
@@ -48,5 +49,11 @@ public class StudentController {
     @PatchMapping("/edit")
     public ResponseEntity<StudentResponseDTO> editStudent(@RequestBody StudentEditRequestDTO dto) {
         return ResponseEntity.ok(studentService.editStudent(dto));
+    }
+
+    @PatchMapping("/edit-subjects")
+    public ResponseEntity<String> editStudentSubjects(@RequestBody StudentEditSubjectsDTO dto) {
+        studentService.editStudentSubjects(dto);
+        return ResponseEntity.ok("Matérias atualizadas.");
     }
 }

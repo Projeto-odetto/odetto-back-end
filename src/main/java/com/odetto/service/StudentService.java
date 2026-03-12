@@ -1,13 +1,11 @@
 package com.odetto.service;
 
 import com.odetto.dto.Student.StudentEditRequestDTO;
+import com.odetto.dto.Student.StudentEditSubjectsDTO;
 import com.odetto.dto.admin.PreCadastroRequestDTO;
 import com.odetto.dto.Student.StudentResponseDTO;
 import com.odetto.dto.Student.StudentFinalCadastroDTO;
-import com.odetto.model.Grades;
-import com.odetto.model.Observations;
-import com.odetto.model.Student;
-import com.odetto.model.SubjectStudent;
+import com.odetto.model.*;
 import com.odetto.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -28,6 +26,7 @@ public class StudentService {
     private final GradesRepository gradesRepository;
     private final ObservationsRepository observationsRepository;
     private final SubjectStudentRepository subjectStudentRepository;
+    private final SubjectRepository subjectRepository;
 
     @Autowired
     public StudentService(StudentRepository studentRepository,
@@ -36,7 +35,8 @@ public class StudentService {
                           ReportCardRepository reportCardRepository,
                           GradesRepository gradesRepository,
                           ObservationsRepository observationsRepository,
-                          SubjectStudentRepository subjectStudentRepository) {
+                          SubjectStudentRepository subjectStudentRepository,
+                          SubjectRepository subjectRepository) {
         this.studentRepository = studentRepository;
         this.objectMapper = objectMapper;
         this.emailService = emailService;
@@ -44,6 +44,7 @@ public class StudentService {
         this.gradesRepository = gradesRepository;
         this.observationsRepository = observationsRepository;
         this.subjectStudentRepository = subjectStudentRepository;
+        this.subjectRepository = subjectRepository;
     }
 
     public List<StudentResponseDTO> listStudent() {
@@ -144,5 +145,31 @@ public class StudentService {
 
         Student saved = studentRepository.save(student);
         return objectMapper.convertValue(saved, StudentResponseDTO.class);
+    }
+
+    public void editStudentSubjects(StudentEditSubjectsDTO dto) {
+        Student student = studentRepository.findById(dto.getEnrollment())
+                .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado."));
+
+        if (dto.getAddedSubjects() != null) {
+            for (String name : dto.getAddedSubjects()) {
+                Subjects subject = subjectRepository.findByName(name)
+                        .orElseThrow(() -> new NoSuchElementException("Matéria não encontrada: " + name));
+                SubjectStudent ss = new SubjectStudent();
+                ss.setStudentEnrollment(student.getEnrollment());
+                ss.setSubjectId(Long.valueOf(subject.getId()));
+                subjectStudentRepository.save(ss);
+            }
+        }
+
+        if (dto.getRemovedSubjects() != null) {
+            for (String name : dto.getRemovedSubjects()) {
+                Subjects subject = subjectRepository.findByName(name)
+                        .orElseThrow(() -> new NoSuchElementException("Matéria não encontrada: " + name));
+                subjectStudentRepository
+                        .findByStudentEnrollmentAndSubjectId(student.getEnrollment(), Long.valueOf(subject.getId()))
+                        .ifPresent(subjectStudentRepository::delete);
+            }
+        }
     }
 }
